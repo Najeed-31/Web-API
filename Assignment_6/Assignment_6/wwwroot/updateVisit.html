@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Update Visit</title>
+</head>
+<body>
+    <h1>Update Visit</h1>
+    <form id="updateVisitForm">
+        <label>Patient Name: <input type="text" name="patientName" required></label><br>
+        <label>
+            Visit Type:
+            <select name="visitTypeName">
+                <option>Consultation</option>
+                <option>Follow-up</option>
+                <option>Emergency</option>
+            </select>
+        </label><br>
+        <label>Doctor Name: <input type="text" name="doctorName" required></label><br>
+        <label>Description: <input type="text" name="description"></label><br>
+        <label>Duration (minutes): <input type="number" name="durationMinutes" required></label><br>
+        <button type="submit">Update</button>
+    </form>
+    <p id="result"></p>
+
+    <script>
+        document.getElementById('updateVisitForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const payload = Object.fromEntries(formData.entries());
+
+            const res = await fetch('/api/visits/update', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            document.getElementById('result').innerText = await res.text();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Search by Patient</title>
+</head>
+<body>
+    <h1>Search by Patient</h1>
+    <form id="searchForm">
+        <label>Patient Name: <input type="text" name="name" required></label><br>
+        <button type="submit">Search</button>
+    </form>
+
+    <table border="1" id="resultTable" style="border-collapse: collapse; margin-top: 20px; display:none;">
+        <thead>
+            <tr>
+                <th>Visit ID</th>
+                <th>Patient Name</th>
+                <th>Doctor Name</th>
+                <th>Visit Type</th>
+                <th>Visit Date</th>
+                <th>Description</th>
+                <th>Duration (mins)</th>
+                <th>Fee</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const name = new FormData(this).get('name');
+
+            const res = await fetch(`/api/visits/by-patient?name=${encodeURIComponent(name)}`);
+            const data = await res.json();
+
+            const table = document.getElementById('resultTable');
+            const tbody = table.querySelector('tbody');
+            tbody.innerHTML = '';
+
+            if (data.length > 0) {
+                table.style.display = '';
+                data.forEach(visit => {
+                    tbody.innerHTML += `
+                            <tr>
+                                <td>${visit.visitId}</td>
+                                <td>${visit.patientName}</td>
+                                <td>${visit.doctorName}</td>
+                                <td>${visit.visitType}</td>
+                                <td>${new Date(visit.visitDate).toLocaleString()}</td>
+                                <td>${visit.description}</td>
+                                <td>${visit.durationMinutes}</td>
+                                <td>${visit.fee.toFixed(2)}</td>
+                            </tr>
+                        `;
+                });
+            } else {
+                table.style.display = 'none';
+                alert('No visits found for this patient.');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Visit</title>
+</head>
+<body>
+    <h1>Delete Visit</h1>
+    <form id="deleteVisitForm">
+        <label>Patient Name: <input type="text" name="patientName" required></label><br>
+        <label>
+            Visit Type:
+            <select name="visitTypeName">
+                <option>Consultation</option>
+                <option>Follow-up</option>
+                <option>Emergency</option>
+            </select>
+        </label><br>
+        <label>Doctor Name: <input type="text" name="doctorName" required></label><br>
+        <label>Duration (minutes): <input type="number" name="durationMinutes" required></label><br>
+        <button type="submit">Delete</button>
+    </form>
+    <p id="result"></p>
+
+    <script>
+        document.getElementById('deleteVisitForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const payload = Object.fromEntries(formData.entries());
+
+            const res = await fetch('/api/visits/delete', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            document.getElementById('result').innerText = await res.text();
+        });
+    </script>
+</body>
+</html>
